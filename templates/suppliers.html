@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suppliers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="font-[Inter] bg-gray-100 text-gray-800">
+  <header class="bg-blue-700 text-white shadow py-4 px-6">
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Finance & Committee Management System</h1>
+      <span class="text-sm">Welcome, Admin</span>
+    </div>
+  </header>
+
+  <div class="bg-white p-4 rounded shadow mb-6">
+    <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input type="text" name="name" placeholder="Supplier Name" required class="p-2 border rounded" />
+      <input type="text" name="phone" placeholder="Phone Number" required class="p-2 border rounded" />
+      <input type="email" name="email" placeholder="Email" required class="p-2 border rounded" />
+      <input type="text" name="address" placeholder="Address" required class="p-2 border rounded" />
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded col-span-1 md:col-span-2">Add Supplier</button>
+    </form>
+  </div>
+
+  <div class="flex max-w-7xl mx-auto py-6 px-4 gap-6">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white p-4 rounded-lg shadow">
+      <nav class="space-y-2">
+        <a href="/dashboard" class="block px-4 py-2 hover:bg-blue-50 rounded">Dashboard</a>
+        <a href="/users" class="block px-4 py-2 hover:bg-blue-50 rounded">Users</a>
+        <a href="/committees" class="block px-4 py-2 hover:bg-blue-50 rounded">Committees</a>
+        <a href="/projects" class="block px-4 py-2 hover:bg-blue-50 rounded">Projects</a>
+        <a href="/funds" class="block px-4 py-2 hover:bg-blue-50 rounded">Funds</a>
+        <a href="/budgets" class="block px-4 py-2 hover:bg-blue-50 rounded">Budgets</a>
+        <a href="/items" class="block px-4 py-2 hover:bg-blue-50 rounded">Items</a>
+        <a href="/suppliers" class="block px-4 py-2 bg-blue-100 text-blue-800 rounded">Suppliers</a>
+        <a href="/transactions" class="block px-4 py-2 hover:bg-blue-50 rounded">Transactions</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <h2 class="text-xl font-semibold mb-4">Suppliers</h2>
+      <div class="bg-white p-4 rounded shadow overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="text-left px-4 py-2">ID</th>
+              <th class="text-left px-4 py-2">Name</th>
+              <th class="text-left px-4 py-2">Contact</th>
+              <th class="text-left px-4 py-2">Email</th>
+              <th class="text-left px-4 py-2">Phone</th>
+              <th class="text-left px-4 py-2">Address</th>
+             
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            {% for s in suppliers %}
+            <tr>
+              <td class="px-4 py-2">{{ s.id }}</td>
+              <td class="px-4 py-2">{{ s.name }}</td>
+              <td class="px-4 py-2">{{ s.phone }}</td>
+              <td class="px-4 py-2">{{ s.email }}</td>
+              <td class="px-4 py-2">{{ s.address }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <footer class="text-center text-sm text-gray-500 py-6">
+    &copy; 2025 Finance & Committee Management System. All rights reserved.
+  </footer>
+</body>
+</html>

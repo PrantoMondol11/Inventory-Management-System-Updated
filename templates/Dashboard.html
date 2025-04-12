@@ -1,0 +1,120 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="font-[Inter] bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-blue-700 text-white shadow py-4 px-6">
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Finance & Committee Management System</h1>
+      <span class="text-sm">Welcome, Admin</span>
+      <a href="login.html">login</a>
+      <a her="signup.html">signup</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-blue-100 py-10 px-6">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="text-3xl font-semibold mb-2">Your Finance Dashboard</h2>
+      <p class="text-gray-700">Monitor your committees, projects, and fund allocations all in one place.</p>
+    </div>
+  </section>
+
+  <!-- Main Layout -->
+  <div class="flex max-w-6xl mx-auto py-6 px-4 gap-6">
+    <!-- Sidebar Nav -->
+    <aside class="w-60 bg-white p-4 rounded-lg shadow">
+      <nav class="space-y-2">
+        <a href="/dashboard" class="block px-4 py-2 bg-blue-100 text-blue-800 rounded">Dashboard</a>
+        <a href="/users" class="block px-4 py-2 hover:bg-blue-50 rounded">Users</a>
+        <a href="/committees" class="block px-4 py-2 hover:bg-blue-50 rounded">Committees</a>
+        <a href="/projects" class="block px-4 py-2 hover:bg-blue-50 rounded">Projects</a>
+        <a href="/funds" class="block px-4 py-2 hover:bg-blue-50 rounded">Funds</a>
+        <a href="/budgets" class="block px-4 py-2 hover:bg-blue-50 rounded">Budgets</a>
+        <a href="/items" class="block px-4 py-2 hover:bg-blue-50 rounded">Items</a>
+        <a href="/suppliers" class="block px-4 py-2 hover:bg-blue-50 rounded">Suppliers</a>
+        <a href="/transactions" class="block px-4 py-2 hover:bg-blue-50 rounded">Transactions</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <!-- Stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-sm text-gray-500">Total Projects</h3>
+          <p class="text-2xl font-bold">2</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-sm text-gray-500">Total Funds</h3>
+          <p class="text-2xl font-bold">$150,000</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-sm text-gray-500">Pending Approvals</h3>
+          <p class="text-2xl font-bold">1</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-sm text-gray-500">Recent Transactions</h3>
+          <p class="text-2xl font-bold">2</p>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-4 rounded shadow">
+          <canvas id="budgetChart"></canvas>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <canvas id="fundChart"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-sm text-gray-500 py-6">
+    &copy; 2025 Finance & Committee Management System. All rights reserved.
+  </footer>
+
+  <script>
+    const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+    new Chart(budgetCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Classroom Upgrade', 'Borewell'],
+        datasets: [{
+          label: 'Allocated vs Total Budget ($)',
+          data: [70000, 50000],
+          backgroundColor: ['#3b82f6', '#facc15']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    const fundCtx = document.getElementById('fundChart').getContext('2d');
+    new Chart(fundCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Grants', 'Donations'],
+        datasets: [{
+          label: 'Fund Source',
+          data: [100000, 50000],
+          backgroundColor: ['#34d399', '#f87171']
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+  </script>
+</body>
+</html>
