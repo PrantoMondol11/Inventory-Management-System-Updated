@@ -1,0 +1,14 @@
+<main class="flex-1">
+    <h2 class="text-xl font-semibold mb-4">Edit Fund</h2>
+    <form method="POST" class="bg-white p-6 rounded shadow max-w-xl space-y-4">
+      <input type="number" step="0.01" name="amount" value="{{ amount }}" placeholder="Amount" required class="w-full p-2 border rounded" />
+      <input type="number" name="project_id" value="{{ project_id }}" placeholder="Project ID" required class="w-full p-2 border rounded" />
+      <select name="transaction_type" class="w-full p-2 border rounded">
+        <option value="grant" {% if transaction_type == 'grant' %}selected{% endif %}>Grant</option>
+        <option value="donation" {% if transaction_type == 'donation' %}selected{% endif %}>Donation</option>
+      </select>
+      <textarea name="description" placeholder="Description" class="w-full p-2 border rounded">{{ description }}</textarea>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Update Fund</button>
+    </form>
+  </main>
+  

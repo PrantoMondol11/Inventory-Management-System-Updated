@@ -1,0 +1,15 @@
+<main class="flex-1">
+    <h2 class="text-xl font-semibold mb-4">Edit Budget</h2>
+    <form method="POST" class="bg-white p-6 rounded shadow max-w-xl space-y-4">
+      <input type="text" name="purpose" value="{{ purpose }}" required class="w-full p-2 border rounded" />
+      <input type="number" step="0.01" name="total_amount" value="{{ total }}" required class="w-full p-2 border rounded" />
+      <input type="number" step="0.01" name="allocated_amount" value="{{ allocated }}" required class="w-full p-2 border rounded" />
+      <select name="approved" class="w-full p-2 border rounded">
+        <option value="yes" {% if approved %}selected{% endif %}>Approved</option>
+        <option value="no" {% if not approved %}selected{% endif %}>Not Approved</option>
+      </select>
+      <input type="number" name="project_id" value="{{ project_id }}" required class="w-full p-2 border rounded" />
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Update Budget</button>
+    </form>
+  </main>
+  
