@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <h1 class="text-2xl font-bold">Pending Projects</h1>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">List of Pending Projects</h2>
+
+            <table class="min-w-full table-auto bg-white rounded-lg shadow-sm">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="py-3 px-6 text-left text-sm font-medium text-gray-600">Project ID</th>
+                        <th class="py-3 px-6 text-left text-sm font-medium text-gray-600">Project Name</th>
+                        <th class="py-3 px-6 text-left text-sm font-medium text-gray-600">Start Date</th>
+                        <th class="py-3 px-6 text-left text-sm font-medium text-gray-600">End Date</th>
+                        <th class="py-3 px-6 text-left text-sm font-medium text-gray-600">Status</th>
+                        <th class="py-3 px-6 text-left text-sm font-medium text-gray-600">Committee ID</th>
+                        <th class="py-3 px-6 text-left text-sm font-medium text-gray-600">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-6 text-gray-700">{{ project[0] }}</td>  <!-- project_id -->
+                        <td class="py-3 px-6 text-gray-700">{{ project[1] }}</td>  <!-- project_name -->
+                        <td class="py-3 px-6 text-gray-700">{{ project[2] }}</td>  <!-- start_date -->
+                        <td class="py-3 px-6 text-gray-700">{{ project[3] }}</td>  <!-- end_date -->
+                        <td class="py-3 px-6 text-yellow-500 font-medium">{{ project[4] }}</td>  <!-- status -->
+                        <td class="py-3 px-6 text-gray-700">{{ project[5] }}</td>  <!-- committee_id -->
+                        <td class="py-3 px-6 text-gray-700">
+                            <!-- Approve Button -->
+                            <form action="{{ url_for('approve_project', project_id=project[0]) }}" method="POST">
+                                <button type="submit" class="bg-gradient-to-r from-green-400 to-blue-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:from-green-500 hover:to-blue-600 transform hover:scale-105 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-300">
+                                    Approve
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="py-3 px-6 text-center text-gray-700">No pending projects found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>
