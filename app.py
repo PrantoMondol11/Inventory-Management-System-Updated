@@ -10,7 +10,7 @@ from wtforms import SelectField
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_PORT'] = 3307
+app.config['MYSQL_PORT'] = 3308
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'mydatabase'
@@ -51,18 +51,33 @@ def users():
 @app.route('/committees', methods=['GET', 'POST'])
 def committees_page():
     cur = mysql.connection.cursor()
-    
-    # Handle form submission
+
     if request.method == 'POST':
         name = request.form['name']
         ctype = request.form['type']
-        user_id = request.form['user_id']
-        cur.execute("INSERT INTO committee (committee_name, committee_type, created_at, user_id) VALUES (%s, %s, NOW(), %s)",
-                    (name, ctype, user_id))
-        mysql.connection.commit()
+        user_name = request.form['user_name']
 
-    # Fetch all committee records
-    cur.execute("SELECT committee_id, committee_name, committee_type, created_at, user_id FROM committee")
+        print("Creating committee with user_name:", user_name)
+
+        try:
+            cur.execute("""
+                INSERT INTO committee (committee_name, committee_type, created_at, user_name)
+                VALUES (%s, %s, NOW(), %s)
+            """, (name, ctype, user_name))
+            mysql.connection.commit()
+        except Exception as e:
+            print("Error inserting committee:", e)
+        finally:
+            cur.close()
+
+        # 🔁 Redirect to avoid duplicate submission
+        return redirect(url_for('committees_page'))
+
+    # For GET request — fetch and show the data
+    cur.execute("""
+        SELECT committee_id, committee_name, committee_type, created_at, user_name
+        FROM committee
+    """)
     data = cur.fetchall()
     cur.close()
 
@@ -72,7 +87,7 @@ def committees_page():
             "name": row[1],
             "type": row[2],
             "created_at": row[3],
-            "created_by": f"User #{row[4]}"
+            "created_by": row[4]
         } for row in data
     ]
 
@@ -154,12 +169,12 @@ def budgets():
         total_amount = request.form['total_amount']
         allocated_amount = request.form['allocated_amount']
         approved = request.form['approved']
-        project_id = request.form['project_id']
+        project_name = request.form['project_name']
 
         cur.execute("""
             INSERT INTO budget (purpose, total_amount, allocated_amount, approved, created_at, project_id)
             VALUES (%s, %s, %s, %s, NOW(), %s)
-        """, (purpose, total_amount, allocated_amount, approved == 'yes', project_id))
+        """, (purpose, total_amount, allocated_amount, approved == 'yes', project_name))
         mysql.connection.commit()
 
     cur.execute("SELECT budget_id, purpose, total_amount, allocated_amount, approved, created_at, project_id FROM budget")
@@ -183,17 +198,17 @@ def items():
         quantity = request.form['quantity']
         unit_price = request.form['unit_price']
         total_cost = float(quantity) * float(unit_price)
-        project_id = request.form['project_id']
-        supplier_id = request.form['supplier_id']
+        project_name = request.form['project_name']
+        supplier_name = request.form['supplier_name']
         purchased_at = request.form['purchased_at']
 
         cur.execute("""
-            INSERT INTO item (item_name, quantity, unit_price, total_cost, project_id, supplier_id, purchased_at)
+            INSERT INTO item (item_name, quantity, unit_price, total_cost, project_name, supplier_name, purchased_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (item_name, quantity, unit_price, total_cost, project_id, supplier_id, purchased_at))
+        """, (item_name, quantity, unit_price, total_cost, project_name, supplier_name, purchased_at))
         mysql.connection.commit()
 
-    cur.execute("SELECT item_id, item_name, quantity, unit_price, total_cost, project_id, supplier_id, purchased_at FROM item")
+    cur.execute("SELECT item_id, item_name, quantity, unit_price, total_cost, project_name, supplier_name, purchased_at FROM item")
     rows = cur.fetchall()
     cur.close()
 
@@ -535,6 +550,41 @@ def delete_transaction(id):
     return redirect('/transactions')
 
 
+@app.route('/pending_projects')
+def pending_projects():
+    cursor = mysql.connection.cursor()
+
+    # Query to fetch all the fields from the project table where status is 'Pending'
+    query = """
+        SELECT project_id, project_name, start_date, end_date, status, committee_id 
+        FROM project 
+        WHERE status = %s
+    """
+    
+    cursor.execute(query, ('Pending',))
+
+    # Fetch all pending projects
+    pending_projects = cursor.fetchall()
+
+    cursor.close()
+
+    # Pass the pending projects data to the template
+    return render_template('pending_projects.html', projects=pending_projects)
+
+@app.route('/approve_project/<int:project_id>', methods=['POST'])
+def approve_project(project_id):
+    cursor = mysql.connection.cursor()
+
+    # Update the status of the project to 'Approved'
+    query = "UPDATE project SET status = %s WHERE project_id = %s"
+    cursor.execute(query, ('Approved', project_id))
+
+    # Commit changes and close the cursor
+    mysql.connection.commit()
+    cursor.close()
+
+    # Redirect to the pending projects page after the update
+    return redirect(url_for('pending_projects'))
 
 if __name__ == '__main__':
     app.run(debug=True)
