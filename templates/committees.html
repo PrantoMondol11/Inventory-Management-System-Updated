@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Committees - Finance Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Committees Management</h2>
+        </div>
+    </div>
+
+    <!-- Add Committee Form -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Add New Committee</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('committees_page') }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Committee Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Committee Type</label>
+                                    <select class="form-select" id="type" name="type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Executive">Executive</option>
+                                        <option value="Advisory">Advisory</option>
+                                        <option value="Project">Project</option>
+                                        <option value="Audit">Audit</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="user_name" class="form-label">Created By</label>
+                                    <input type="text" class="form-control" id="user_name" name="user_name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Committee</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Committees Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Committees List</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Created By</th>
+                                    <th>Created At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for committee in committees %}
+                                <tr>
+                                    <td>{{ committee.id }}</td>
+                                    <td>{{ committee.name }}</td>
+                                    <td>{{ committee.type }}</td>
+                                    <td>{{ committee.created_by }}</td>
+                                    <td>{{ committee.created_at }}</td>
+                                    <td>
+                                        <a href="{{ url_for('edit_committee', id=committee.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger" 
+                                                onclick="confirmDelete('{{ committee.id }}', '{{ committee.name }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete committee <span id="committeeName"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function confirmDelete(committeeId, committeeName) {
+    document.getElementById('committeeName').textContent = committeeName;
+    document.getElementById('deleteForm').action = "{{ url_for('delete_committee', id=0) }}".replace('0', committeeId);
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+{% endblock %} 

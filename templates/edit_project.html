@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Project - Finance Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Edit Project</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('edit_project', id=project.id) }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Project Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ project.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ project.start_date }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ project.end_date }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="">Select Status</option>
+                                <option value="Planning" {% if project.status == 'Planning' %}selected{% endif %}>Planning</option>
+                                <option value="In Progress" {% if project.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                <option value="On Hold" {% if project.status == 'On Hold' %}selected{% endif %}>On Hold</option>
+                                <option value="Completed" {% if project.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Cancelled" {% if project.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="committee_id" class="form-label">Committee</label>
+                            <select class="form-select" id="committee_id" name="committee_id">
+                                <option value="">Select Committee</option>
+                                {% for committee in committees %}
+                                <option value="{{ committee.id }}" {% if committee.id == project.committee_id %}selected{% endif %}>
+                                    {{ committee.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Update Project</button>
+                            <a href="{{ url_for('projects') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

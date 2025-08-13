@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Fund Requests - Finance Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Fund Requests</h2>
+    
+    <!-- Fund Request Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Submit Fund Request</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="project_id" class="form-label">Project</label>
+                        <select class="form-select" id="project_id" name="project_id" required>
+                            <option value="">Select Project</option>
+                            {% for project in projects %}
+                            <option value="{{ project.id }}">{{ project.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">৳</span>
+                            <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="purpose" class="form-label">Purpose</label>
+                    <input type="text" class="form-control" id="purpose" name="purpose" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Fund Request History -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Fund Request History</h5>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary active" data-status="all">All</button>
+                <button type="button" class="btn btn-outline-warning" data-status="pending">Pending</button>
+                <button type="button" class="btn btn-outline-success" data-status="approved">Approved</button>
+                <button type="button" class="btn btn-outline-danger" data-status="rejected">Rejected</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Amount</th>
+                            <th>Purpose</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fund in funds %}
+                        <tr class="fund-row" data-status="{{ fund.status }}">
+                            <td>{{ fund.project }}</td>
+                            <td>৳{{ "%.2f"|format(fund.amount) }}</td>
+                            <td>{{ fund.purpose }}</td>
+                            <td>{{ fund.description }}</td>
+                            <td>
+                                {% if fund.status == 'pending' %}
+                                <span class="badge bg-warning">Pending</span>
+                                {% elif fund.status == 'approved' %}
+                                <span class="badge bg-success">Approved</span>
+                                {% elif fund.status == 'rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ fund.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                {% if fund.status == 'approved' and fund.approval_notes %}
+                                <small class="text-success">{{ fund.approval_notes }}</small>
+                                {% elif fund.status == 'rejected' and fund.rejection_reason %}
+                                <small class="text-danger">{{ fund.rejection_reason }}</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusButtons = document.querySelectorAll('.btn-group .btn');
+    const fundRows = document.querySelectorAll('.fund-row');
+
+    statusButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            statusButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            // Filter rows
+            const status = this.dataset.status;
+            fundRows.forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %} 

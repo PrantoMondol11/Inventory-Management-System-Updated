@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Budgets{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Budget Management</h2>
+    
+    <!-- Add to Budget Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Add to Budget</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button type="submit" class="btn btn-primary btn-block">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Budget Overview -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Total Budget Balance</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 class="display-4">${{ "%.2f"|format(total_balance) }}</h2>
+                    <p class="text-muted">Last Updated: {{ last_updated.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

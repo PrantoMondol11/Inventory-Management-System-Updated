@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Approved Funds - Finance Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Approved Funds</h2>
+    
+    <!-- Approved Funds List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Approved Fund Requests</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Project</th>
+                            <th>Amount</th>
+                            <th>Purpose</th>
+                            <th>Description</th>
+                            <th>Requested Date</th>
+                            <th>Approved Date</th>
+                            <th>Approval Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fund in approved_funds %}
+                        <tr>
+                            <td>{{ fund.id }}</td>
+                            <td>{{ fund.project_name }}</td>
+                            <td>৳{{ "%.2f"|format(fund.amount) }}</td>
+                            <td>{{ fund.purpose }}</td>
+                            <td>{{ fund.description }}</td>
+                            <td>{{ fund.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ fund.approved_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ fund.approval_notes }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-info" 
+                                        onclick="showDetailsModal({{ fund.id }})">
+                                    Details
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Fund Request Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detailsContent">
+                Loading...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showDetailsModal(requestId) {
+    fetch(`/fund_request/${requestId}/details`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('detailsContent').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('detailsModal')).show();
+        });
+}
+</script>
+{% endblock %} 

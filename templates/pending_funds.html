@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Pending Funds - Finance Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Pending Funds</h2>
+    
+    <!-- Pending Funds List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Fund Requests Awaiting Approval</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Project</th>
+                            <th>Amount</th>
+                            <th>Purpose</th>
+                            <th>Description</th>
+                            <th>Requested Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fund in pending_funds %}
+                        <tr>
+                            <td>{{ fund.id }}</td>
+                            <td>{{ fund.project_name }}</td>
+                            <td>৳{{ "%.2f"|format(fund.amount) }}</td>
+                            <td>{{ fund.purpose }}</td>
+                            <td>{{ fund.description }}</td>
+                            <td>{{ fund.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-success" 
+                                        onclick="showApproveModal({{ fund.id }}, '{{ fund.project_name }}', {{ fund.amount }})">
+                                    Approve
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                        onclick="showRejectModal({{ fund.id }})">
+                                    Reject
+                                </button>
+                                <button type="button" class="btn btn-sm btn-info" 
+                                        onclick="showDetailsModal({{ fund.id }})">
+                                    Details
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Approve Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Approve Fund Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to approve this fund request?</p>
+                <p><strong>Project:</strong> <span id="approveProjectName"></span></p>
+                <p><strong>Amount:</strong> ৳<span id="approveAmount"></span></p>
+                <form id="approveForm" method="POST">
+                    <div class="mb-3">
+                        <label for="approval_notes" class="form-label">Approval Notes</label>
+                        <textarea class="form-control" id="approval_notes" name="approval_notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="submitApprove()">Approve</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reject Fund Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rejectForm" method="POST">
+                    <div class="mb-3">
+                        <label for="rejection_reason" class="form-label">Rejection Reason</label>
+                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="submitReject()">Reject</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Fund Request Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detailsContent">
+                Loading...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentRequestId = null;
+
+function showApproveModal(requestId, projectName, amount) {
+    currentRequestId = requestId;
+    document.getElementById('approveProjectName').textContent = projectName;
+    document.getElementById('approveAmount').textContent = amount.toFixed(2);
+    document.getElementById('approveForm').action = `/fund_request/${requestId}/approve`;
+    new bootstrap.Modal(document.getElementById('approveModal')).show();
+}
+
+function showRejectModal(requestId) {
+    currentRequestId = requestId;
+    document.getElementById('rejectForm').action = `/fund_request/${requestId}/reject`;
+    new bootstrap.Modal(document.getElementById('rejectModal')).show();
+}
+
+function showDetailsModal(requestId) {
+    fetch(`/fund_request/${requestId}/details`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('detailsContent').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('detailsModal')).show();
+        });
+}
+
+function submitApprove() {
+    document.getElementById('approveForm').submit();
+}
+
+function submitReject() {
+    if (!document.getElementById('rejection_reason').value) {
+        alert('Please provide a rejection reason');
+        return;
+    }
+    document.getElementById('rejectForm').submit();
+}
+</script>
+{% endblock %} 
