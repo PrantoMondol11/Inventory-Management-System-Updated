@@ -12,13 +12,15 @@ from datetime import datetime
 app = Flask(__name__, template_folder='templates')
 app.secret_key = 'my_secret_key_here'
 
+import os
+
 # Database configuration
 db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'database': 'newdb',
-    'port': 3306
+    'host': os.environ.get('DB_HOST', 'localhost'),
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', ''),
+    'database': os.environ.get('DB_NAME', 'newdb'),
+    'port': int(os.environ.get('DB_PORT', 3306))
 }
 
 def get_db_connection():

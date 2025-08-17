@@ -1,6 +1,6 @@
 -- Create database if not exists
-CREATE DATABASE IF NOT EXISTS NewDB;
-USE NewDB;
+CREATE DATABASE IF NOT EXISTS newdb;
+USE newdb;
 
 -- Create user table
 CREATE TABLE IF NOT EXISTS user (
